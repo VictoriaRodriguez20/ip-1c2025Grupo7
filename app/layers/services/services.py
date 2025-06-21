@@ -21,7 +21,8 @@ def filterByCharacter(name):
 
     for card in getAllImages():
         # debe verificar si el name está contenido en el nombre de la card, antes de agregarlo al listado de filtered_cards.
-        filtered_cards.append(card)
+        if name.lower() == card.name:
+            filtered_cards.append(card)
 
     return filtered_cards
 
@@ -37,7 +38,7 @@ def filterByType(type_filter):
 
 # añadir favoritos (usado desde el template 'home.html')
 def saveFavourite(request):
-    fav = '' # transformamos un request en una Card (ver translator.py)
+    fav = translator.fromTemplateIntoCard(request)# transformamos un request en una Card (ver translator.py)
     fav.user = get_user(request) # le asignamos el usuario correspondiente.
 
     return repositories.save_favourite(fav) # lo guardamos en la BD.
@@ -49,11 +50,11 @@ def getAllFavourites(request):
     else:
         user = get_user(request)
 
-        favourite_list = [] # buscamos desde el repositories.py TODOS Los favoritos del usuario (variable 'user').
+        favourite_list = repositories.get_all_favourites(user) # buscamos desde el repositories.py TODOS Los favoritos del usuario (variable 'user').
         mapped_favourites = []
 
         for favourite in favourite_list:
-            card = '' # convertimos cada favorito en una Card, y lo almacenamos en el listado de mapped_favourites que luego se retorna.
+            card = translator.fromRepositoryIntoCard(favourite) # convertimos cada favorito en una Card, y lo almacenamos en el listado de mapped_favourites que luego se retorna.
             mapped_favourites.append(card)
 
         return mapped_favourites

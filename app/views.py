@@ -11,7 +11,7 @@ def index_page(request):
 # esta función obtiene 2 listados: uno de las imágenes de la API y otro de favoritos, ambos en formato Card, y los dibuja en el template 'home.html'.
 def home(request):
     images = services.getAllImages()
-    favourite_list = []
+    favourite_list = services.getAllFavourites(request)
 
     return render(request, 'home.html', { 'images': images, 'favourite_list': favourite_list })
 
@@ -21,8 +21,8 @@ def search(request):
 
     # si el usuario ingresó algo en el buscador, se deben filtrar las imágenes por dicho ingreso.
     if (name != ''):
-        images = []
-        favourite_list = []
+        images = services.filterByCharacter(name)
+        favourite_list = services.getAllFavourites(request)
 
         return render(request, 'home.html', { 'images': images, 'favourite_list': favourite_list })
     else:
@@ -43,15 +43,20 @@ def filter_by_type(request):
 # Estas funciones se usan cuando el usuario está logueado en la aplicación.
 @login_required
 def getAllFavouritesByUser(request):
-    pass
+    favourite_list = services.getAllFavourites(request)
+
+    return render(request, 'favourites.html', {'favourite_list':favourite_list})
 
 @login_required
 def saveFavourite(request):
-    pass
+    services.saveFavourite(request)
+    return redirect ('home')
+
 
 @login_required
 def deleteFavourite(request):
-    pass
+    services.deleteFavourite(request)
+    return redirect ('favoritos')
 
 @login_required
 def exit(request):
