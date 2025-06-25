@@ -1,5 +1,6 @@
 # capa de vista/presentación
 
+from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import redirect, render
 from .layers.services import services
 from django.contrib.auth.decorators import login_required
@@ -39,6 +40,17 @@ def filter_by_type(request):
         return render(request, 'home.html', { 'images': images, 'favourite_list': favourite_list })
     else:
         return redirect('home')
+
+def register(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('login')
+    else:
+        form = UserCreationForm()
+
+    return render(request, 'registration/register.html', {'form': form})
 
 # Estas funciones se usan cuando el usuario está logueado en la aplicación.
 @login_required
