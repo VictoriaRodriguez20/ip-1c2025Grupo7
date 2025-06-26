@@ -17,9 +17,7 @@ class Card:
     def __eq__(self, other):
         if not isinstance(other, Card):
             return False
-        return (self.name, self.height, self.weight, self.id) == \
-               (other.name, other.height, other.weight, other.id)
-
+        return (self.name == other.name)
     # Método hashCode.
     def __hash__(self):
         return hash((self.name, self.height, self.weight, self.id))
