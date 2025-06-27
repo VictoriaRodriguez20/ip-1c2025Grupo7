@@ -8,7 +8,7 @@ from django.contrib.auth import logout
 from django.contrib import messages
 from django.core.mail import send_mail
 from django.conf import settings
-from .forms import SubscribeForm
+from .forms import CustomUserCreationForm, SubscribeForm
 
 def index_page(request):
     return render(request, 'index.html')
@@ -47,27 +47,19 @@ def filter_by_type(request):
 
 def register(request):
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('subscribe')
-    else:
-        form = UserCreationForm()
-
-    return render(request, 'registration/register.html', {'form': form})
-
-def subscribe(request):
-    form = SubscribeForm()
-    if request.method == 'POST':
-        form = SubscribeForm(request.POST)
-        if form.is_valid():
+            #mail de registro
             subject = 'Registro'
             message = 'Felicitaciones!! Tu usuario fue registrado correctamente en la Pokedex'
             recipient = form.cleaned_data.get('email')
-            send_mail(subject, 
-              message, settings.EMAIL_HOST_USER, [recipient], fail_silently=False)
+            send_mail(subject, message, settings.EMAIL_HOST_USER, [recipient], fail_silently=False)
             return redirect('login')
-    return render(request, 'registration/subscribe.html', {'form': form})
+    else:
+        form = CustomUserCreationForm()
+
+    return render(request, 'registration/register.html', {'form': form})
 
 # Estas funciones se usan cuando el usuario está logueado en la aplicación.
 @login_required
